@@ -45,3 +45,13 @@ addBtn.addEventListener('click', () => {
 closeModal.addEventListener('click', () => {
   modal.style.display = "none";
 });
+
+function loadTasks() {
+  let t = localStorage.getItem('tasks');
+  if (!t) return [];
+  return JSON.parse(t);
+}
+
+function saveTasks(tasks) {
+  localStorage.setItem('tasks', JSON.stringify(tasks));
+}
