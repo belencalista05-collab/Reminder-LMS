@@ -1,38 +1,67 @@
-async function loadTasks() {
-  const res = await fetch('tasks.json');
-  const tasks = await res.json();
+// =======================
+// LOAD & SAVE TASKS
+// =======================
+function loadTasks() {
+  let t = localStorage.getItem('tasks');
+  if (!t) return [];
+  return JSON.parse(t);
+}
+
+function saveTasks(tasks) {
+  localStorage.setItem('tasks', JSON.stringify(tasks));
+}
+
+// =======================
+// RENDER TASK LIST
+// =======================
+function displayTasks() {
   const list = document.getElementById('task-list');
+  list.innerHTML = "";
 
-t.tasks.forEach(t => {
-  const card = document.createElement('div');
-  card.className = 'card';
-  card.innerHTML = `
-    <h3>${t.title}</h3>
-    <p>Due: ${t.due}</p>
-    <button class="btn-detail">Lihat Detail</button>
-  `;
-  card.querySelector('.btn-detail').addEventListener('click', () => {
-    alert(`Tugas: ${t.title}\\nDeadline: ${t.due}`);
+  const tasks = loadTasks();
+
+  tasks.forEach(t => {
+    const card = document.createElement('div');
+    card.className = 'card';
+    card.innerHTML = `
+      <h3>${t.title}</h3>
+      <p>Due: ${t.due.replace("T"," ")}</p>
+      <button class="btn-detail">Lihat Detail</button>
+    `;
+
+    // Detail button
+    card.querySelector('.btn-detail').addEventListener('click', () => {
+      alert(`Tugas: ${t.title}\nDeadline: ${t.due}`);
+    });
+
+    // Double-click reminder
+    card.addEventListener('dblclick', () => {
+      sendReminder(t);
+    });
+
+    list.appendChild(card);
   });
-  list.appendChild(card);
-});
+}
 
-  function sendReminder(t) {
+// =======================
+// NOTIFICATION REMINDER
+// =======================
+function sendReminder(t) {
   if (Notification.permission === 'granted') {
-    new Notification('Reminder: '+ t.title, {
-      body: 'Deadline: '+ t.due
+    new Notification('Reminder: ' + t.title, {
+      body: 'Deadline: ' + t.due
     });
   }
 }
 
-document.querySelectorAll('.card').forEach(card => {
-  card.addEventListener('dblclick', () => {
-    const title = card.querySelector('h3').innerText;
-    const due = card.querySelector('p').innerText;
-    sendReminder({ title, due });
-  });
-});
+// Request permission
+if (Notification.permission !== 'granted') {
+  Notification.requestPermission();
+}
 
+// =======================
+// MODAL CONTROL
+// =======================
 const addBtn = document.getElementById('addTaskBtn');
 const modal = document.getElementById('taskModal');
 const closeModal = document.getElementById('closeModal');
@@ -46,16 +75,9 @@ closeModal.addEventListener('click', () => {
   modal.style.display = "none";
 });
 
-function loadTasks() {
-  let t = localStorage.getItem('tasks');
-  if (!t) return [];
-  return JSON.parse(t);
-}
-
-function saveTasks(tasks) {
-  localStorage.setItem('tasks', JSON.stringify(tasks));
-}
-
+// =======================
+// ADD NEW TASK
+// =======================
 saveTaskBtn.addEventListener('click', () => {
   const title = document.getElementById('taskTitle').value;
   const due = document.getElementById('taskDue').value;
@@ -74,3 +96,8 @@ saveTaskBtn.addEventListener('click', () => {
   modal.style.display = "none";
   displayTasks();
 });
+
+// =======================
+// INITIAL LOAD
+// =======================
+displayTasks();
