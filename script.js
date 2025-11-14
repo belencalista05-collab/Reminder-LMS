@@ -55,3 +55,22 @@ function loadTasks() {
 function saveTasks(tasks) {
   localStorage.setItem('tasks', JSON.stringify(tasks));
 }
+
+saveTaskBtn.addEventListener('click', () => {
+  const title = document.getElementById('taskTitle').value;
+  const due = document.getElementById('taskDue').value;
+
+  if (title === "" || due === "") {
+    alert("Semua field harus diisi");
+    return;
+  }
+
+  const newTask = { title, due };
+
+  const current = loadTasks();
+  current.push(newTask);
+  saveTasks(current);
+
+  modal.style.display = "none";
+  displayTasks();
+});
