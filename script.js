@@ -33,3 +33,15 @@ document.querySelectorAll('.card').forEach(card => {
   });
 });
 
+const addBtn = document.getElementById('addTaskBtn');
+const modal = document.getElementById('taskModal');
+const closeModal = document.getElementById('closeModal');
+const saveTaskBtn = document.getElementById('saveTaskBtn');
+
+addBtn.addEventListener('click', () => {
+  modal.style.display = "flex";
+});
+
+closeModal.addEventListener('click', () => {
+  modal.style.display = "none";
+});
